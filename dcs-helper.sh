@@ -17,8 +17,8 @@ dcs_installer="DCS_World_web.exe"
 srs_git="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases"
 srs_installer="SRS-AutoUpdater.exe"
 #Wine download URL
-wine_download="https://github.com/starcitizen-lug/raw-wine/releases/download/10.10/raw-wine-10.10.tar.gz"
-wine_file="raw-wine-10.10.tar.gz"
+wine_download="https://github.com/GloriousEggroll/wine-ge-custom/releases/download/GE-Proton8-26/wine-lutris-GE-Proton8-26-x86_64.tar.xz"
+wine_file="wine-lutris-GE-Proton8-26-x86_64.tar.xz"
 
 function option1 {
     echo "Alright, so you wanted to installed DCS on wine... Lets get to it!" 
@@ -27,10 +27,11 @@ function option1 {
 
         cd "$install_dir"
         mkdir runner 
+        echo "unzipping "$wine_file""
         tar -xf "$script_dir"/tmp/"$wine_file" -C runner/
         
 
-    export wine_path=""$install_dir"/runner/raw-wine-10.10/bin"
+    export wine_path=""$install_dir"/runner/lutris-GE-Proton8-26-x86_64/bin"
 
     echo "awesome, your game SHOULD be installing into "$install_dir" now..."
 
@@ -39,7 +40,7 @@ function option1 {
     export WINEDLLOVERRIDES="wbemprox=n"
 
     # Install verbs into the prefix with winetricks
-    winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47
+    winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 win10
 
     "$wine_path"/wineserver -k
     "$wine_path"/wine ""$script_dir"/tmp/"$dcs_installer""
