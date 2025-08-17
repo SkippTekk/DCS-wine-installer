@@ -25,3 +25,8 @@ Steps for hopefully easier for people
 8) If you don't have a black screen, login and enjoy!
 
 If you have any issues, Please open **Issues** tab and give me detailed instructions, "it won't work" or anything that short will be closed and ignored.
+
+
+# Things that are working.... On my machine
+
+X50 hotas, IR tracking with DelanClip and Opentrack (details for that will be later)
