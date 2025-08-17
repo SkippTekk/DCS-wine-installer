@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export WINEPREFIX="/mnt/2tbgaming/dcs"
+export WINEPREFIX="REPLACEME"
 launch_log=""$WINEPREFIX"dcs-launch.log"
 
 export WINEDLLOVERRIDES="wbemprox=n" # needed for the wbem to work properly (not sure why, just a thing we need)
