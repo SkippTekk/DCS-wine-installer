@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export WINEPREFIX="/mnt/games/dcs/"
-launch_log="$WINEPREFIX/dcs-launch.log"
+export WINEPREFIX="/mnt/2tbgaming/dcs"
+launch_log=""$WINEPREFIX"dcs-launch.log"
 
 export WINEDLLOVERRIDES="wbemprox=n" # needed for the wbem to work properly (not sure why, just a thing we need)
 export WINEDEBUG=-all # Cut down on console debug messages
@@ -14,9 +14,7 @@ export MESA_SHADER_CACHE_MAX_SIZE="10G"
 export DXVK_STATE_CACHE_PATH="$WINEPREFIX"
 # Optional HUDs
 #export DXVK_HUD=fps,compiler
-export MANGOHUD=1
-
-export wine_path="/mnt/games/dcs/runner/lutris-GE-Proton8-26-x86_64/bin/"
+#export MANGOHUD=1
 
 case "$1" in
     "shell")
@@ -40,4 +38,4 @@ esac
 # }
 #trap "update_check; \"$wine_path\"/wineserver -k" EXIT
 
-"$wine_path"/wine "$WINEPREFIX/drive_c/Program Files/Eagle Dynamics/DCS World/bin/DCS_updater.exe"
+umu-run "$WINEPREFIX/drive_c/Program Files/Eagle Dynamics/DCS World/bin/DCS_updater.exe"
