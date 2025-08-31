@@ -67,12 +67,13 @@ function dcsInstall {
     #export wine_path="$install_dir/runner/GE-Proton10-11/files/bin"
     export WINEPREFIX="$install_dir"
     export WINEDLLOVERRIDES="wbemprox=n"
+    export PROTONPATH=GE-Proton
 
     echo "Awesome, your game SHOULD be installing into $install_dir now..."
     echo "DEBUG: Install dir is $install_dir and is running its task."
 
     # Install necessary components with winetricks
-    winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 win10
+    winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 win10 dotnetdesktop8
 
     # Restart the Wine server and run the DCS installer
     
@@ -152,16 +153,25 @@ function blackScreenPatch {
 
 }
 
-function dependencies {
-    if [ ! -x "winetricks --version" ]; then
-        winetricks --version
-        echo "winetricks is installed. Woot" 
-    else
-        echo "winetricks not installed, Please install it"
-    fi
+function srsInstall {
+    export WINEPREFIX="$GAME_DIR"
+    export PROTONPATH=GE-Proton
+
+    winetricks -q dotnetdesktop8
+
+    umu-run "$script_dir/tmp/$srs_installer"
 }
 
-options=("Install DCS on pure wine" "Download DCS and SRS into tmp folder." "Black screen patch (after full install)" "Get help (discord)" "Exit")
+function srsUpdate {
+        export WINEPREFIX="$GAME_DIR"
+    export PROTONPATH=GE-Proton
+
+    # winetricks -q dotnetdesktop8
+
+    umu-run "$WINEPREFIX/drive_c/Program Files/DCS-SimpleRadio-Standalone/$srs_installer"
+}
+
+options=("Install DCS on pure wine" "Download DCS and SRS into tmp folder." "Black screen patch (after full install)" "Get help (discord)" "SRS install" "SRS update" "Exit")
 
 PS3="Please select on what you need: "
 
@@ -172,8 +182,9 @@ select opt in "${options[@]}"; do
     2) fileDownloads ;;
     3) blackScreenPatch && exit;;
     4) echo "Join the Community Discord and ask for the Linux channel! https://discord.gg/7NFYC73med " ;;
-    5) echo "good bye, thanks for using this! " && exit ;;
-    6) dependencies ;;
+    5) srsInstall ;;
+    6) srsUpdate ;;
+    7) echo "good bye, thanks for using this! " && exit ;;
     *) echo "Invalid option, please use a number that is listed"
         
     esac
