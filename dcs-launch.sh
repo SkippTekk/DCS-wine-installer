@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-
-export WINEPREFIX="/mnt/2tbgaming/dcs"
+source ./config.cfg
+export WINEPREFIX="$GAME_DIR"
 launch_log=""$WINEPREFIX"dcs-launch.log"
 
 export WINEDLLOVERRIDES="wbemprox=n" # needed for the wbem to work properly (not sure why, just a thing we need)
@@ -12,9 +12,13 @@ export MESA_SHADER_CACHE_MAX_SIZE="10G"
 
 #DXVK cache for easy clean up
 export DXVK_STATE_CACHE_PATH="$WINEPREFIX/cache"
+
+#This enables the latest Proton to be used. Otherwise it defaults too Proton 9
+export PROTONPATH=GE-Proton
+
 # Optional HUDs
 #export DXVK_HUD=fps,compiler
-#export MANGOHUD=1
+export MANGOHUD=1
 
 case "$1" in
     "shell")
