@@ -10,9 +10,17 @@ if [ "$(id -u)" -eq 0 ]; then
     exit 1
 fi
 
+
+
 # Script directory
 script_dir="$(realpath "$0" | xargs -0 dirname)"
 
+# Creates the config file. DO NOT EDIT THE SCRIPT FILE IT WILL BREAK IF YOU DO
+if [ -f ""$script_dir"/config.cfg" ]; then
+        echo "Config file found... using it"
+    else
+        touch "$script_dir"/config.cfg
+fi
 
 #shell config file... hopefully this works cause i need it now.... crap
 source $script_dir/config.cfg
@@ -50,12 +58,13 @@ function dcsInstall {
     fi
 
     # Create the runner directory
-    mkdir -p "$install_dir/runner"
-    echo "Unzipping $wine_file..."
-    tar -xf "$script_dir/tmp/$wine_file" -C "$install_dir/runner/"
+    echo GAME_DIR="$install_dir" > "$script_dir"/config.cfg
+    # mkdir -p "$install_dir/runner"
+    # echo "Unzipping $wine_file..."
+    # tar -xf "$script_dir/tmp/$wine_file" -C "$install_dir/runner/"
 
     # Set up Wine environment variables
-    export wine_path="$install_dir/runner/GE-Proton10-11/files/bin"
+    #export wine_path="$install_dir/runner/GE-Proton10-11/files/bin"
     export WINEPREFIX="$install_dir"
     export WINEDLLOVERRIDES="wbemprox=n"
 
@@ -113,13 +122,13 @@ function fileDownloads {
 
 
 }
-
+# currently a HUGE bug in this one... DO NOT RUN UNTIL YOU HAVE FULLY INSTALLED THE GAME. Basically have the base game files and at the launch script stage. Otherwise it WILL spam your console with errors.
 function blackScreenPatch {
 
     patch_found="false"
 
     while [ "$patch_found" = "false" ]; do
-        if [ -f "$install_dir/drive_c/users/steamuser/Saved Games/DCS/Config/$options_file" ]; then
+        if [ -f "$GAME_DIR/drive_c/users/steamuser/Saved Games/DCS/Config/$options_file" ]; then
             patch_found="true"
                 echo "Awesome, patch file found. You can now sign in and play!"
                 exit
@@ -130,8 +139,8 @@ function blackScreenPatch {
                     if [ -f ""$script_dir"/"$options_file"" ]; then
                         file_found="true"
                         echo "File found... Moving for you"
-                            cp "$script_dir"/"$options_file" ""$install_dir"/drive_c/users/steamuser/Saved Games/DCS/Config/"
-                        echo ""$options_file" has been moved too "$install_dir"/drive_c/users/steamuser/Saved Games/DCS/Config/"
+                            cp "$script_dir"/"$options_file" ""$GAME_DIR"/drive_c/users/steamuser/Saved Games/DCS/Config/"
+                        echo ""$options_file" has been moved too "$GAME_DIR"/drive_c/users/steamuser/Saved Games/DCS/Config/"
                             else
                                 echo ""$options_file" not found, Please download it from the github. "$github" and place it into "$script_dir""
                                 
@@ -141,6 +150,15 @@ function blackScreenPatch {
         done
 
 
+}
+
+function dependencies {
+    if [ ! -x "winetricks --version" ]; then
+        winetricks --version
+        echo "winetricks is installed. Woot" 
+    else
+        echo "winetricks not installed, Please install it"
+    fi
 }
 
 options=("Install DCS on pure wine" "Download DCS and SRS into tmp folder." "Black screen patch (after full install)" "Get help (discord)" "Exit")
@@ -155,6 +173,7 @@ select opt in "${options[@]}"; do
     3) blackScreenPatch && exit;;
     4) echo "Join the Community Discord and ask for the Linux channel! https://discord.gg/7NFYC73med " ;;
     5) echo "good bye, thanks for using this! " && exit ;;
+    6) dependencies ;;
     *) echo "Invalid option, please use a number that is listed"
         
     esac

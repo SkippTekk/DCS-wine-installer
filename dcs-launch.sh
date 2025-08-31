@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-export WINEPREFIX="REPLACEME"
+export WINEPREFIX="/mnt/2tbgaming/dcs"
 launch_log=""$WINEPREFIX"dcs-launch.log"
 
 export WINEDLLOVERRIDES="wbemprox=n" # needed for the wbem to work properly (not sure why, just a thing we need)
 export WINEDEBUG=-all # Cut down on console debug messages
 
 # Mesa (AMD/Intel) shader cache options
-export MESA_SHADER_CACHE_DIR="$WINEPREFIX"
+export MESA_SHADER_CACHE_DIR="$WINEPREFIX/cache"
 export MESA_SHADER_CACHE_MAX_SIZE="10G"
 
 #DXVK cache for easy clean up
-export DXVK_STATE_CACHE_PATH="$WINEPREFIX"
+export DXVK_STATE_CACHE_PATH="$WINEPREFIX/cache"
 # Optional HUDs
 #export DXVK_HUD=fps,compiler
 #export MANGOHUD=1
