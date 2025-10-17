@@ -34,7 +34,7 @@ fi
 script_dir="$(realpath "$0" | xargs -0 dirname)"
 
 # Creates the config file. DO NOT EDIT THE SCRIPT FILE IT WILL BREAK IF YOU DO
-if [ -f ""$script_dir"/config.cfg" ]; then
+if [ -f "$script_dir/config.cfg" ]; then
         echo "Config file found... using it"
     else
         touch "$script_dir"/config.cfg
@@ -47,33 +47,33 @@ fileDownloads() {
     if [ -d "$script_dir/files" ]; then
         echo "$script_dir/files" exists. Neat
     else
-        echo ""$script_dir/files" doesn't exist. Creating"
+        echo "$script_dir/files doesn't exist. Creating"
         mkdir "$script_dir/files"
-        echo "$script_dir/files" created.
+        echo "$script_dir/files created."
     fi
     if [ -f "$script_dir/files/$dcs_installer" ]; then
-        echo "File "$dcs_installer" exists, Skipping"
+        echo "File $dcs_installer exists, Skipping"
     else
-        echo "File "$dcs_installer" doesn't exists, Downloading"
+        echo "File $dcs_installer doesn't exists, Downloading"
         cd "$script_dir/files"
         wget "$dcs_url" -q --show-progress
-        echo "File "$dcs_installer" downloaded."
+        echo "File $dcs_installer downloaded."
     fi
     if [ -f "$script_dir/files/$options_file" ]; then
-        echo "File "$options_file" exists, Skipping"
+        echo "File $options_file exists, Skipping"
     else
-        echo "File "$options_file" doesn't exists, Downloading"
+        echo "File $options_file doesn't exists, Downloading"
         cd "$script_dir/files"
         wget "$options_download" -q --show-progress
-        echo "File "$options_file" downloaded."
+        echo "File $options_file downloaded."
     fi
     if [ -f "$script_dir/files/$wine_file" ]; then
-        echo "File "$wine_file" exists, Skipping"
+        echo "File $wine_file exists, Skipping"
     else
-        echo "File "$wine_file" doesn't exists, Downloading"
+        echo "File $wine_file doesn't exists, Downloading"
         cd "$script_dir/files"
         wget "$wine_download" -q --show-progress
-        echo "File "$wine_file" downloaded."
+        echo "File $wine_file downloaded."
     fi
 
     zenity --info --title="File Downloads" --text="Congrats, all the files are downloaded and or already downloaded."
@@ -87,7 +87,7 @@ directory(){
             return
         fi
             echo GAME_DIR="$install_dir" > "$script_dir"/config.cfg
-            zenity --info --title="Directory choosing" --text="Location "$install_dir" selected "
+            zenity --info --title="Directory choosing" --text="Location $install_dir selected "
 
     else
         if zenity --question --title="Directory choosing" --text="Directory already choosen. Change Directory?"; then
@@ -116,8 +116,8 @@ wineTricksCheck(){
 
 
 dcsInstall() {
-    if [ "$GAME_DIR" =export WINEPREFIX="$GAME_DIR" "" ]; then
-        zenity --warning --title="DCS install" --text="Error, please run the Directory and the Files first before this. "
+    if [ "$GAME_DIR" = "" ]; then
+        zenity --warning --title="DCS install" --text="Error, please run the Directory and the Files first before this."
     else
         echo "generating cache folder"
         cd "$GAME_DIR"
@@ -126,7 +126,7 @@ dcsInstall() {
         fileDownloads
         echo "Choosen location is $GAME_DIR, installing there."
 
-    tar -xvf "$script_dir"/files/"$wine_file" -C "$GAME_DIR"/runner/ 2> /dev/null
+    tar -xvf "$script_dir/files/$wine_file" -C "$GAME_DIR"/runner/ 2> /dev/null
      
 
 
@@ -134,7 +134,7 @@ dcsInstall() {
 
         export WINEPREFIX="$GAME_DIR"
         export WINEDLLOVERRIDES="wbemprox=n"
-        export wine_path="$WINEPREFIX/runner/"$wine_folder"/bin/"
+        export wine_path="$WINEPREFIX/runner/$wine_folder/bin/"
 
         winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 dotnet8 win11
 
@@ -179,7 +179,7 @@ dcsSRS() {
             zenity --error --title="SRS install" --text="DO NOT UPDATE THIS PAST THIS, currently this is the ONLY version that works on linux...."
 
                 export WINEPREFIX="$GAME_DIR"
-                export wine_path="$WINEPREFIX/runner/"$wine_folder"/bin/"
+                export wine_path="$WINEPREFIX/runner/$wine_folder/bin/"
 
                 "$wine_path/wine" "$script_dir/files/srs/Installer.exe"
             zenity --error --title="SRS install" --text="SRS should be installed, just remember. DO NOT UPDATE THIS"

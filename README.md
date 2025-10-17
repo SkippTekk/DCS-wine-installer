@@ -24,8 +24,8 @@ X50 hotas, IR tracking with DelanClip and Opentrack (details for that will be la
 
 ## Thank yous to the people that has helped me
 
-[Lug-Helper](https://github.com/starcitizen-lug/lug-helper/tree/main) 
+[LUG HELPER](https://github.com/starcitizen-lug/lug-helper/tree/main) 
 > Basically the code im using for examples and creating this.
 
-theSane. 
+[theSane.](https://github.com/the-sane)
 > basically helped me start this and didn't complain about my noobness and constant bugging
