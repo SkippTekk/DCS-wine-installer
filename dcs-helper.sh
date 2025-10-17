@@ -1,5 +1,24 @@
 #!/bin/bash
 
+#DCS official URL
+dcs_url="https://www.digitalcombatsimulator.com/upload/iblock/959/d33ul8g3arxnzc1ejgdaa8uev8gvmew2/DCS_World_web.exe"
+dcs_installer="DCS_World_web.exe"
+
+#SRS Github URL
+srs_git="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/2.1.1.0/DCS-SimpleRadioStandalone-2.1.1.0.zip"
+srs_installer="DCS-SimpleRadioStandalone-2.1.1.0.zip"
+
+#Wine download URL
+wine_download="https://github.com/Kron4ek/Wine-Builds/releases/download/10.16/wine-10.16-amd64.tar.xz"
+wine_file="wine-10.16-amd64.tar.xz"
+wine_folder="wine-10.16-amd64"
+
+# Options lua config file download and file name
+options_download="https://raw.githubusercontent.com/deleterium/dcs_on_linux/refs/heads/master/options.lua"
+options_file="options.lua"
+
+# My github location.
+github="https://github.com/SkippTekk/DCS-wine-installer"
 
 
 
@@ -9,7 +28,6 @@ if [ "$(id -u)" -eq 0 ]; then
     echo "This script is not supposed to be run as root!"
     exit 1
 fi
-
 
 
 # Script directory
@@ -25,170 +43,204 @@ fi
 #shell config file... hopefully this works cause i need it now.... crap
 source $script_dir/config.cfg
 
-
-#DCS official URL
-dcs_url="https://www.digitalcombatsimulator.com/en/downloads/world/stable/"
-dcs_installer="DCS_World_web.exe"
-
-#SRS Github URL
-srs_git="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases"
-srs_installer="SRS-AutoUpdater.exe"
-#Wine download URL
-wine_download="https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton10-12/GE-Proton10-12.tar.gz"
-wine_file="GE-Proton10-12.tar.gz"
-
-# Options lua config file download and file name
-options_download="https://raw.githubusercontent.com/deleterium/dcs_on_linux/refs/heads/master/options.lua"
-options_file="options.lua"
-
-# My github location.
-github="https://github.com/SkippTekk/DCS-wine-installer"
-
-function dcsInstall {
-    echo "Alright, so you wanted to install DCS on Wine... Let's get to it!"
-    echo "Where do you want to install it?"
-
-    # Prompt user for installation directory
-    install_dir="$(zenity --file-selection --directory --title="Choose your DCS install location" --filename="$HOME/" 2>/dev/null)"
-
-    # Check if the user selected a directory
-    if [ -z "$install_dir" ]; then
-        echo "No installation directory selected. Exiting."
-        return
-    fi
-
-    # Create the runner directory
-    echo GAME_DIR="$install_dir" > "$script_dir"/config.cfg
-    # mkdir -p "$install_dir/runner"
-    # echo "Unzipping $wine_file..."
-    # tar -xf "$script_dir/tmp/$wine_file" -C "$install_dir/runner/"
-
-    # Set up Wine environment variables
-    #export wine_path="$install_dir/runner/GE-Proton10-11/files/bin"
-    export WINEPREFIX="$install_dir"
-    export WINEDLLOVERRIDES="wbemprox=n"
-    export PROTONPATH=GE-Proton
-
-    echo "Awesome, your game SHOULD be installing into $install_dir now..."
-    echo "DEBUG: Install dir is $install_dir and is running its task."
-
-    # Install necessary components with winetricks
-    winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 win10 dotnetdesktop8
-
-    # Restart the Wine server and run the DCS installer
-    
-    umu-run "$script_dir/tmp/$dcs_installer"
-    
-    # "$wine_path/wineserver" -k
-    # "$wine_path/wine" "$script_dir/tmp/$dcs_installer"
-    # "$wine_path/wineserver" -k
-}
-
-
-function fileDownloads {
-
-    #Checks if user has installed Wine runner.
-    installer_found="false"
-    while [ "$installer_found" = "false" ]; do
-    if [ -f ""$script_dir"/tmp/"$wine_file"" ]; then
-            installer_found="true"
-            echo "Runner already downloaded, ignoring"
-        else
-            echo "Runner not found, installing now."
-        echo "Downloading runner from RawFox"
-        echo "Moving into "$script_dir""
-            cd "$script_dir"
-        echo "creating tmp directory"
-            mkdir "$script_dir"/tmp
-        echo "moving into tmp"
-            cd "$script_dir"/tmp
-        echo "downloading file"
-            wget $wine_download -q --show-progress
-    fi
-    # checks if the user has downloaded DCS official download
-    if [ -f ""$script_dir"/tmp/"$dcs_installer"" ]; then
-        installer_found="true"
-            echo "just to make sure, that "$dcs_installer" existed, and it does!" && echo "\o/ woot. \o/" && echo "Now for the next steps"
-        else
-            echo ""$dcs_installer" not found... Please download it manually from "$dcs_url". And place into "$script_dir"/tmp folder"
-    fi
-    # Checks if user has downloaded SRS
-    if [ -f "$script_dir/tmp/$srs_installer" ]; then
-        installer_found="true"
-            echo "just to make sure, that "$srs_installer" existed, and it does!"
+fileDownloads() {
+    if [ -d "$script_dir/files" ]; then
+        echo "$script_dir/files" exists. Neat
     else
-        echo ""$srs_installer" not found... Please download it manually from "$srs_git" and place into "$script_dir"/tmp folder"
+        echo ""$script_dir/files" doesn't exist. Creating"
+        mkdir "$script_dir/files"
+        echo "$script_dir/files" created.
     fi
-    done
+    if [ -f "$script_dir/files/$dcs_installer" ]; then
+        echo "File "$dcs_installer" exists, Skipping"
+    else
+        echo "File "$dcs_installer" doesn't exists, Downloading"
+        cd "$script_dir/files"
+        wget "$dcs_url" -q --show-progress
+        echo "File "$dcs_installer" downloaded."
+    fi
+    if [ -f "$script_dir/files/$options_file" ]; then
+        echo "File "$options_file" exists, Skipping"
+    else
+        echo "File "$options_file" doesn't exists, Downloading"
+        cd "$script_dir/files"
+        wget "$options_download" -q --show-progress
+        echo "File "$options_file" downloaded."
+    fi
+    if [ -f "$script_dir/files/$wine_file" ]; then
+        echo "File "$wine_file" exists, Skipping"
+    else
+        echo "File "$wine_file" doesn't exists, Downloading"
+        cd "$script_dir/files"
+        wget "$wine_download" -q --show-progress
+        echo "File "$wine_file" downloaded."
+    fi
 
-
+    zenity --info --title="File Downloads" --text="Congrats, all the files are downloaded and or already downloaded."
 }
-# currently a HUGE bug in this one... DO NOT RUN UNTIL YOU HAVE FULLY INSTALLED THE GAME. Basically have the base game files and at the launch script stage. Otherwise it WILL spam your console with errors.
-function blackScreenPatch {
 
-    patch_found="false"
-
-    while [ "$patch_found" = "false" ]; do
-        if [ -f "$GAME_DIR/drive_c/users/steamuser/Saved Games/DCS/Config/$options_file" ]; then
-            patch_found="true"
-                echo "Awesome, patch file found. You can now sign in and play!"
-                exit
-            else
-                echo ""$options_file" not found...Moving it over for you."
-                    file_found="false"
-                    while [ "$file_found" = "false" ]; do
-                    if [ -f ""$script_dir"/"$options_file"" ]; then
-                        file_found="true"
-                        echo "File found... Moving for you"
-                            cp "$script_dir"/"$options_file" ""$GAME_DIR"/drive_c/users/steamuser/Saved Games/DCS/Config/"
-                        echo ""$options_file" has been moved too "$GAME_DIR"/drive_c/users/steamuser/Saved Games/DCS/Config/"
-                            else
-                                echo ""$options_file" not found, Please download it from the github. "$github" and place it into "$script_dir""
-                                
-                    fi
-                    done
+directory(){
+    if [ "$GAME_DIR" = "" ]; then
+        install_dir="$(zenity --file-selection --directory --title="Choose your DCS install location" --filename="$HOME/" 2>/dev/null)"
+        if [ -z "$install_dir" ]; then
+            zenity --warning --title="Directory Choosing" --text="No installation directory selected. Exiting."
+            return
         fi
-        done
+            echo GAME_DIR="$install_dir" > "$script_dir"/config.cfg
+            zenity --info --title="Directory choosing" --text="Location "$install_dir" selected "
 
+    else
+        if zenity --question --title="Directory choosing" --text="Directory already choosen. Change Directory?"; then
+            install_dir="$(zenity --file-selection --directory --title="Choose your DCS install location" --filename="$HOME/" 2>/dev/null)"
+            echo GAME_DIR="$install_dir" > "$script_dir"/config.cfg
+        fi
+    fi
 
 }
 
-function srsInstall {
-    export WINEPREFIX="$GAME_DIR"
-    export PROTONPATH=GE-Proton
-
-    winetricks -q dotnetdesktop8
-
-    umu-run "$script_dir/tmp/$srs_installer"
+wineCheck(){
+    if command -v wine > /dev/null 2>&1; then
+        echo "Wine is installed"
+    else
+        echo "Wine needs to be installed"
+    fi
+}
+wineTricksCheck(){
+    if command -v winetricks > /dev/null 2>&1; then
+        echo "Winetricks is installed"
+    else
+        echo "Winetricks needs to be installed"
+    fi
 }
 
-function srsUpdate {
+
+
+dcsInstall() {
+    if [ "$GAME_DIR" =export WINEPREFIX="$GAME_DIR" "" ]; then
+        zenity --warning --title="DCS install" --text="Error, please run the Directory and the Files first before this. "
+    else
+        echo "generating cache folder"
+        cd "$GAME_DIR"
+        mkdir cache runner
+        echo "Created folders cache and runner"
+        fileDownloads
+        echo "Choosen location is $GAME_DIR, installing there."
+
+    # tar -xvf "$script_dir"/files/"$wine_file" -C "$GAME_DIR"/runner/ 2> /dev/null
+     
+
+
+        echo "setting up wine stuff"
+
         export WINEPREFIX="$GAME_DIR"
-    export PROTONPATH=GE-Proton
+        export WINEDLLOVERRIDES="wbemprox=n"
+        export wine_path="$WINEPREFIX/runner/"$wine_folder"/bin/"
 
-    # winetricks -q dotnetdesktop8
+        winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 win11 dotnet8
 
-    umu-run "$WINEPREFIX/drive_c/Program Files/DCS-SimpleRadio-Standalone/$srs_installer"
+        wine "$script_dir/files/$dcs_installer"
+
+        # "$wine_path/wineserver" -k
+        # "$wine_path/wine" "$script_dir/files/$dcs_installer"
+        # "$wine_path/wineserver" -k
+    fi
 }
 
-options=("Install DCS on pure wine" "Download DCS and SRS into tmp folder." "Black screen patch (after full install)" "Get help (discord)" "SRS install" "SRS update" "Exit")
+wineCFG() {
+    export WINEPREFIX="$GAME_DIR"
 
-PS3="Please select on what you need: "
+    wine winecfg
+}
 
-select opt in "${options[@]}"; do
+wineTricksCFG() {
+    export WINEPREFIX="$GAME_DIR"
 
-    case $REPLY in
-    1) dcsInstall ;;
-    2) fileDownloads ;;
-    3) blackScreenPatch && exit;;
-    4) echo "Join the Community Discord and ask for the Linux channel! https://discord.gg/7NFYC73med " ;;
-    5) srsInstall ;;
-    6) srsUpdate ;;
-    7) echo "good bye, thanks for using this! " && exit ;;
-    *) echo "Invalid option, please use a number that is listed"
-        
-    esac
+    winetricks
+}
+
+
+blackScreenPatch(){
+    if [ -f "$GAME_DIR/drive_c/users/$USER/Saved Games/DCS/Config/$options_file" ]; then
+        echo "$options_file is found, skipping"
+    else
+        echo "$options_file file not found, gotta move it"
+            cp "$script_dir/files/$options_file" "$GAME_DIR/drive_c/users/$USER/Saved Games/DCS/Config/$options_file"
+        echo "file moved, Please start the game up again"
+    fi
+}
+
+dcsSRS() { 
+    zenity --question --title="SRS install" --text="You sure you want to install SRS?"
+        if [ -f "$script_dir/files/$srs_installer" ]; then
+            cd "$script_dir/files"
+            mkdir srs
+            unzip -d srs "$srs_installer"
+
+            zenity --error --title="SRS install" --text="DO NOT UPDATE THIS PAST THIS, currently this is the ONLY version that works on linux...."
+
+                export WINEPREFIX="$GAME_DIR"
+                export wine_path="$WINEPREFIX/runner/"$wine_folder"/bin/"
+
+                "$wine_path/wine" "$script_dir/files/srs/Installer.exe"
+            zenity --error --title="SRS install" --text="SRS should be installed, just remember. DO NOT UPDATE THIS"
+            else
+                cd "$script_dir/files"
+                wget "$srs_git" -q --show-progress 
+                zenity --info --title="SRS install" --text="SRS download completed, please re-run the SRS selection to install it"
+        fi
+
+        # echo "SRS downloaded, Installing it now"
+        # unzip -d ./srs "$srs_installer"
+        # else 
+
+
+}
+
+#menu for the selection
+menu=(
+    "Install Directory"
+    "Depndicy check"
+    "Download files"
+    "dcs Install"
+    " blackscreen"
+    " srs"
+    " winetricks"
+    " wineCFG"
+    " exit"
+)
+
+#menu that has FALSE at the start in the selection to allow radiocheck
+Menu=( ${menu[@]/#/"FALSE"} )
+
+
+while true; do
+        SELECTION="$(zenity --list --title="DCS Wine helper" --height=475 --text="Choose your selection" --radiolist --column="select" --column="options" "${Menu[@]}")"
+        echo "$SELECTION"
+            if [ "$SELECTION" = "Directory" ]; then
+                directory
+            elif [ "$SELECTION" = "check" ]; then
+            wineCheck
+            wineTricksCheck
+                # zenity --info Installed--title="Pre-set check" --text "$wine"
+            elif [ "$SELECTION" = "files" ]; then
+                fileDownloads
+            elif [ "$SELECTION" = "Install" ]; then
+                dcsInstall
+            elif [ "$SELECTION" = "blackscreen" ]; then
+                blackScreenPatch
+            elif [ "$SELECTION" = "srs" ]; then
+                dcsSRS
+            elif [ "$SELECTION" = "wineCFG" ]; then
+                wineCFG
+            elif [ "$SELECTION" = "winetricks" ]; then
+                wineTricksCFG
+            elif [ "$SELECTION" = "exit" ]; then
+                exit 1
+            else
+                exit 1
+        fi
 done
+
 
 ⢀⣤⠴⠖⠋⠉⠓⢦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⣿⣄⠀⠂⠀⢶⣿⣇⡙⠷⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
