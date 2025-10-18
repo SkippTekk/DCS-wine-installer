@@ -2,7 +2,7 @@
 source ./config.cfg
 
 export WINEPREFIX="$GAME_DIR" #sets the game location DO NOT EDIT THIS
-export WINEDLLOVERRIDES="wbemprox=n" # needed for the wbem to work properly (not sure why, just a thing we need)
+export WINEDLLOVERRIDES="wbemprox=n,WINE_SIMULATE_WRITECOPY=1" # needed for the wbem to work properly (not sure why, just a thing we need)
 export WINEDEBUG=-all # Cut down on console debug messages
 
 
@@ -15,7 +15,7 @@ export MESA_SHADER_CACHE_MAX_SIZE="10G"
 export DXVK_STATE_CACHE_PATH="$WINEPREFIX/cache"
 
 #Custom wine running cause of the Debug issue
-export wine_path="$WINEPREFIX/runner/wine-10.16-staging-tkg-amd64/bin/"
+export wine_path="$WINEPREFIX/runner/wine-9.22-amd64/bin/"
 
 
 # Optional HUDs

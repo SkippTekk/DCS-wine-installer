@@ -9,9 +9,9 @@ srs_git="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/
 srs_installer="DCS-SimpleRadioStandalone-2.1.1.0.zip"
 
 #Wine download URL
-wine_download="https://github.com/Kron4ek/Wine-Builds/releases/download/10.16/wine-10.16-staging-tkg-amd64.tar.xz"
-wine_file="wine-10.16-staging-tkg-amd64.tar.xz"
-wine_folder="wine-10.16-staging-tkg-amd64"
+wine_download="https://github.com/Kron4ek/Wine-Builds/releases/download/9.22/wine-9.22-amd64.tar.xz"
+wine_file="wine-9.22-amd64.tar.xz"
+wine_folder="wine-9.22-amd64"
 
 # Options lua config file download and file name
 options_download="https://raw.githubusercontent.com/deleterium/dcs_on_linux/refs/heads/master/options.lua"
@@ -137,7 +137,6 @@ dcsInstall() {
         export wine_path="$WINEPREFIX/runner/$wine_folder/bin/"
 
         winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 dotnet8 win11
-
         # wine "$script_dir/files/$dcs_installer"
 
         "$wine_path/wineserver" -k
@@ -150,7 +149,7 @@ wineCFG() {
     export WINEPREFIX="$GAME_DIR"
 
     wine winecfg
-}
+} 
 
 wineTricksCFG() {
     export WINEPREFIX="$GAME_DIR"
@@ -188,6 +187,8 @@ dcsSRS() {
                 wget "$srs_git" -q --show-progress 
                 zenity --info --title="SRS install" --text="SRS download completed, please re-run the SRS selection to install it"
         fi
+
+        rm -r "$script_dir/files/srs"
 
         # echo "SRS downloaded, Installing it now"
         # unzip -d ./srs "$srs_installer"

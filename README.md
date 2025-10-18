@@ -29,3 +29,14 @@ X50 hotas, IR tracking with DelanClip and Opentrack (details for that will be la
 
 [theSane.](https://github.com/the-sane)
 > basically helped me start this and didn't complain about my noobness and constant bugging
+
+
+
+
+## Known issues
+
+- Mulplayer crashes on loading
+
+fix:
+    1) go to ``drive_c/Program Files/Eagle Dynamics/DCS World/MissionEditor/modules/Options/options.Db.lua`` and comment out lines 118-131 AND **sound('voice_chat_input')**
+    2) ``drive_c/Program Files/Eagle Dynamics/DCS World/MissionEditor/modules/mul_voicechat.lua`` and look for **voice_chat.onPeerConnect(connectData)** and comment it out with -- at the start.
