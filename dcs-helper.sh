@@ -9,9 +9,9 @@ srs_git="https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/download/
 srs_installer="DCS-SimpleRadioStandalone-2.1.1.0.zip"
 
 #Wine download URL
-wine_download="https://github.com/Kron4ek/Wine-Builds/releases/download/9.22/wine-9.22-amd64.tar.xz"
-wine_file="wine-9.22-amd64.tar.xz"
-wine_folder="wine-9.22-amd64"
+wine_download="https://github.com/Kron4ek/Wine-Builds/releases/download/10.19/wine-10.19-staging-amd64.tar.xz"
+wine_file="wine-10.19-staging-amd64.tar.xz"
+wine_folder="wine-10.19-staging-amd64"
 
 # Options lua config file download and file name
 options_download="https://raw.githubusercontent.com/deleterium/dcs_on_linux/refs/heads/master/options.lua"
@@ -41,7 +41,7 @@ if [ -f "$script_dir/config.cfg" ]; then
 fi
 
 #shell config file... hopefully this works cause i need it now.... crap
-source $script_dir/config.cfg
+source "$script_dir"/config.cfg
 
 fileDownloads() {
     if [ -d "$script_dir/files" ]; then
@@ -136,7 +136,7 @@ dcsInstall() {
         export WINEDLLOVERRIDES="wbemprox=n"
         export wine_path="$WINEPREFIX/runner/$wine_folder/bin/"
 
-        winetricks -q dxvk vcrun2017 d3dcompiler_43 d3dcompiler_47 d3dx9 dotnet8 win11
+        winetricks -q corefonts xact_x64 d3dcompiler_47 vcrun2022 dotnet8 win10
         # wine "$script_dir/files/$dcs_installer"
 
         "$wine_path/wineserver" -k
