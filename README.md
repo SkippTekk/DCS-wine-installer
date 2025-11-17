@@ -59,6 +59,6 @@ X50 hotas, IR tracking with [DelanClip](https://delanclip.com/) and [Opentrack](
 
 fix:
 
-    1) go to ``drive_c/Program Files/Eagle Dynamics/DCS World/MissionEditor/modules/Options/options.Db.lua`` and comment out lines 118-131 AND **sound('voice_chat_input')** line 457
-    
-    2) ``drive_c/Program Files/Eagle Dynamics/DCS World/MissionEditor/modules/mul_voicechat.lua`` and look for **voice_chat.onPeerConnect(connectData)** 2440 and comment it out with -- at the start.
+1) go to ``drive_c/Program Files/Eagle Dynamics/DCS World/MissionEditor/modules/Options/options.Db.lua`` and comment out lines 118-131 AND **sound('voice_chat_input')** line 457
+   
+2) ``drive_c/Program Files/Eagle Dynamics/DCS World/MissionEditor/modules/mul_voicechat.lua`` and look for **voice_chat.onPeerConnect(connectData)** 2440 and comment it out with -- at the start.
